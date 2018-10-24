@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/Control.OSMGeocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>ITINERAIRE OPTIQUE</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/Control.OSMGeocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/PARCELLES_0.js"></script>
+        <script src="data/BATIS_1.js"></script>
+        <script src="data/COURSDEAU_2.js"></script>
+        <script src="data/VOIRIE_3.js"></script>
+        <script src="data/Emplacementsboitiers_4.js"></script>
+        <script src="data/Parcourscablesoptiques_5.js"></script>
+        <script src="data/Supportssouterrains_6.js"></script>
+        <script src="data/Supportsariens_7.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[48.5543159931,6.95378220362],[48.5584780474,6.961852521]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        L.control.locate().addTo(map);
+        var measureControl = new L.Control.Measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_PARCELLES_0(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">ogc_fid</th>\
+                        <td>' + (feature.properties['ogc_fid'] !== null ? Autolinker.link(String(feature.properties['ogc_fid'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">geo_parcel</th>\
+                        <td>' + (feature.properties['geo_parcel'] !== null ? Autolinker.link(String(feature.properties['geo_parcel'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">idu</th>\
+                        <td>' + (feature.properties['idu'] !== null ? Autolinker.link(String(feature.properties['idu'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">tex</th>\
+                        <td>' + (feature.properties['tex'] !== null ? Autolinker.link(String(feature.properties['tex'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">geo_sectio</th>\
+                        <td>' + (feature.properties['geo_sectio'] !== null ? Autolinker.link(String(feature.properties['geo_sectio'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">nomcommune</th>\
+                        <td>' + (feature.properties['nomcommune'] !== null ? Autolinker.link(String(feature.properties['nomcommune'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">codecommun</th>\
+                        <td>' + (feature.properties['codecommun'] !== null ? Autolinker.link(String(feature.properties['codecommun'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">adresse</th>\
+                        <td>' + (feature.properties['adresse'] !== null ? Autolinker.link(String(feature.properties['adresse'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">urbain</th>\
+                        <td>' + (feature.properties['urbain'] !== null ? Autolinker.link(String(feature.properties['urbain'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">code</th>\
+                        <td>' + (feature.properties['code'] !== null ? Autolinker.link(String(feature.properties['code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">comptecomm</th>\
+                        <td>' + (feature.properties['comptecomm'] !== null ? Autolinker.link(String(feature.properties['comptecomm'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">voie</th>\
+                        <td>' + (feature.properties['voie'] !== null ? Autolinker.link(String(feature.properties['voie'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lot</th>\
+                        <td>' + (feature.properties['lot'] !== null ? Autolinker.link(String(feature.properties['lot'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">_ID</th>\
+                        <td>' + (feature.properties['_ID'] !== null ? Autolinker.link(String(feature.properties['_ID'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PARCELLES_0_0() {
+            return {
+                pane: 'pane_PARCELLES_0',
+                opacity: 1,
+                color: 'rgba(223,223,223,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(242,242,242,1.0)',
+            }
+        }
+        map.createPane('pane_PARCELLES_0');
+        map.getPane('pane_PARCELLES_0').style.zIndex = 400;
+        map.getPane('pane_PARCELLES_0').style['mix-blend-mode'] = 'normal';
+        var layer_PARCELLES_0 = new L.geoJson(json_PARCELLES_0, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_PARCELLES_0',
+            onEachFeature: pop_PARCELLES_0,
+            style: style_PARCELLES_0_0,
+        });
+        bounds_group.addLayer(layer_PARCELLES_0);
+        map.addLayer(layer_PARCELLES_0);
+        function pop_BATIS_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">geo_batime</th>\
+                        <td>' + (feature.properties['geo_batime'] !== null ? Autolinker.link(String(feature.properties['geo_batime'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">annee</th>\
+                        <td>' + (feature.properties['annee'] !== null ? Autolinker.link(String(feature.properties['annee'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">object_rid</th>\
+                        <td>' + (feature.properties['object_rid'] !== null ? Autolinker.link(String(feature.properties['object_rid'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">geo_dur</th>\
+                        <td>' + (feature.properties['geo_dur'] !== null ? Autolinker.link(String(feature.properties['geo_dur'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">tex</th>\
+                        <td>' + (feature.properties['tex'] !== null ? Autolinker.link(String(feature.properties['tex'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">creat_date</th>\
+                        <td>' + (feature.properties['creat_date'] !== null ? Autolinker.link(String(feature.properties['creat_date'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">update_dat</th>\
+                        <td>' + (feature.properties['update_dat'] !== null ? Autolinker.link(String(feature.properties['update_dat'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lot</th>\
+                        <td>' + (feature.properties['lot'] !== null ? Autolinker.link(String(feature.properties['lot'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_BATIS_1_0() {
+            return {
+                pane: 'pane_BATIS_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,106,106,0.5)',
+            }
+        }
+        map.createPane('pane_BATIS_1');
+        map.getPane('pane_BATIS_1').style.zIndex = 401;
+        map.getPane('pane_BATIS_1').style['mix-blend-mode'] = 'normal';
+        var layer_BATIS_1 = new L.geoJson(json_BATIS_1, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_BATIS_1',
+            onEachFeature: pop_BATIS_1,
+            style: style_BATIS_1_0,
+        });
+        bounds_group.addLayer(layer_BATIS_1);
+        map.addLayer(layer_BATIS_1);
+        function pop_COURSDEAU_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['full_id'] !== null ? Autolinker.link(String(feature.properties['full_id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? Autolinker.link(String(feature.properties['osm_id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_type'] !== null ? Autolinker.link(String(feature.properties['osm_type'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['waterway'] !== null ? Autolinker.link(String(feature.properties['waterway'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ref_sandre'] !== null ? Autolinker.link(String(feature.properties['ref_sandre'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>name</strong><br />' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['width'] !== null ? Autolinker.link(String(feature.properties['width'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? Autolinker.link(String(feature.properties['layer'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tunnel'] !== null ? Autolinker.link(String(feature.properties['tunnel'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_COURSDEAU_2_0() {
+            return {
+                pane: 'pane_COURSDEAU_2',
+                opacity: 1,
+                color: 'rgba(192,223,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 9.0,
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_COURSDEAU_2');
+        map.getPane('pane_COURSDEAU_2').style.zIndex = 402;
+        map.getPane('pane_COURSDEAU_2').style['mix-blend-mode'] = 'normal';
+        var layer_COURSDEAU_2 = new L.geoJson(json_COURSDEAU_2, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_COURSDEAU_2',
+            onEachFeature: pop_COURSDEAU_2,
+            style: style_COURSDEAU_2_0,
+        });
+        bounds_group.addLayer(layer_COURSDEAU_2);
+        map.addLayer(layer_COURSDEAU_2);
+        function pop_VOIRIE_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ref'] !== null ? Autolinker.link(String(feature.properties['ref'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_VOIRIE_3_0() {
+            return {
+                pane: 'pane_VOIRIE_3',
+                opacity: 1,
+                color: 'rgba(255,242,175,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 7.0,
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_VOIRIE_3');
+        map.getPane('pane_VOIRIE_3').style.zIndex = 403;
+        map.getPane('pane_VOIRIE_3').style['mix-blend-mode'] = 'normal';
+        var layer_VOIRIE_3 = new L.geoJson(json_VOIRIE_3, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_VOIRIE_3',
+            onEachFeature: pop_VOIRIE_3,
+            style: style_VOIRIE_3_0,
+        });
+        bounds_group.addLayer(layer_VOIRIE_3);
+        map.addLayer(layer_VOIRIE_3);
+        function pop_Emplacementsboitiers_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? Autolinker.link(String(feature.properties['NOM'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>REFERENCE</strong><br />' + (feature.properties['REFERENCE'] !== null ? Autolinker.link(String(feature.properties['REFERENCE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>AMONT</strong><br />' + (feature.properties['AMONT'] !== null ? Autolinker.link(String(feature.properties['AMONT'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NBEPISSURE</strong><br />' + (feature.properties['NBEPISSURE'] !== null ? Autolinker.link(String(feature.properties['NBEPISSURE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FONCTION</strong><br />' + (feature.properties['FONCTION'] !== null ? Autolinker.link(String(feature.properties['FONCTION'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ISOLE</strong><br />' + (feature.properties['ISOLE'] !== null ? Autolinker.link(String(feature.properties['ISOLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['_'] !== null ? Autolinker.link(String(feature.properties['_'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Emplacementsboitiers_4_0() {
+            return {
+                pane: 'pane_Emplacementsboitiers_4',
+                radius: 9.0,
+                opacity: 1,
+                color: 'rgba(254,0,34,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,0.0)',
+            }
+        }
+        map.createPane('pane_Emplacementsboitiers_4');
+        map.getPane('pane_Emplacementsboitiers_4').style.zIndex = 404;
+        map.getPane('pane_Emplacementsboitiers_4').style['mix-blend-mode'] = 'normal';
+        var layer_Emplacementsboitiers_4 = new L.geoJson(json_Emplacementsboitiers_4, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Emplacementsboitiers_4',
+            onEachFeature: pop_Emplacementsboitiers_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Emplacementsboitiers_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Emplacementsboitiers_4);
+        map.addLayer(layer_Emplacementsboitiers_4);
+        function pop_Parcourscablesoptiques_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? Autolinker.link(String(feature.properties['NOM'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CODE</strong><br />' + (feature.properties['CODE'] !== null ? Autolinker.link(String(feature.properties['CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TYPE_STRUC</strong><br />' + (feature.properties['TYPE_STRUC'] !== null ? Autolinker.link(String(feature.properties['TYPE_STRUC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>LGR_CARTO</strong><br />' + (feature.properties['LGR_CARTO'] !== null ? Autolinker.link(String(feature.properties['LGR_CARTO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DIAMETRE</strong><br />' + (feature.properties['DIAMETRE'] !== null ? Autolinker.link(String(feature.properties['DIAMETRE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TYPEFIBRE</strong><br />' + (feature.properties['TYPEFIBRE'] !== null ? Autolinker.link(String(feature.properties['TYPEFIBRE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAPACITE</strong><br />' + (feature.properties['CAPACITE'] !== null ? Autolinker.link(String(feature.properties['CAPACITE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ORIGINE</strong><br />' + (feature.properties['ORIGINE'] !== null ? Autolinker.link(String(feature.properties['ORIGINE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>EXTREMITE</strong><br />' + (feature.properties['EXTREMITE'] !== null ? Autolinker.link(String(feature.properties['EXTREMITE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTION</strong><br />' + (feature.properties['SECTION'] !== null ? Autolinker.link(String(feature.properties['SECTION'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ISOLE</strong><br />' + (feature.properties['ISOLE'] !== null ? Autolinker.link(String(feature.properties['ISOLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['_'] !== null ? Autolinker.link(String(feature.properties['_'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Parcourscablesoptiques_5_0() {
+            return {
+                pane: 'pane_Parcourscablesoptiques_5',
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 5.0,
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_Parcourscablesoptiques_5');
+        map.getPane('pane_Parcourscablesoptiques_5').style.zIndex = 405;
+        map.getPane('pane_Parcourscablesoptiques_5').style['mix-blend-mode'] = 'normal';
+        var layer_Parcourscablesoptiques_5 = new L.geoJson(json_Parcourscablesoptiques_5, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Parcourscablesoptiques_5',
+            onEachFeature: pop_Parcourscablesoptiques_5,
+            style: style_Parcourscablesoptiques_5_0,
+        });
+        bounds_group.addLayer(layer_Parcourscablesoptiques_5);
+        map.addLayer(layer_Parcourscablesoptiques_5);
+        function pop_Supportssouterrains_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? Autolinker.link(String(feature.properties['NOM'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CODE</strong><br />' + (feature.properties['CODE'] !== null ? Autolinker.link(String(feature.properties['CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PROPRIETAI</strong><br />' + (feature.properties['PROPRIETAI'] !== null ? Autolinker.link(String(feature.properties['PROPRIETAI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TYPE_STRUC</strong><br />' + (feature.properties['TYPE_STRUC'] !== null ? Autolinker.link(String(feature.properties['TYPE_STRUC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MODELE</strong><br />' + (feature.properties['MODELE'] !== null ? Autolinker.link(String(feature.properties['MODELE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['_'] !== null ? Autolinker.link(String(feature.properties['_'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Supportssouterrains_6_0() {
+            return {
+                pane: 'pane_Supportssouterrains_6',
+                radius: 4.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+            }
+        }
+        map.createPane('pane_Supportssouterrains_6');
+        map.getPane('pane_Supportssouterrains_6').style.zIndex = 406;
+        map.getPane('pane_Supportssouterrains_6').style['mix-blend-mode'] = 'normal';
+        var layer_Supportssouterrains_6 = new L.geoJson(json_Supportssouterrains_6, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Supportssouterrains_6',
+            onEachFeature: pop_Supportssouterrains_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Supportssouterrains_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Supportssouterrains_6);
+        map.addLayer(layer_Supportssouterrains_6);
+        function pop_Supportsariens_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? Autolinker.link(String(feature.properties['NOM'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CODE</strong><br />' + (feature.properties['CODE'] !== null ? Autolinker.link(String(feature.properties['CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PROPRIETAI</strong><br />' + (feature.properties['PROPRIETAI'] !== null ? Autolinker.link(String(feature.properties['PROPRIETAI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TYPE_STRUC</strong><br />' + (feature.properties['TYPE_STRUC'] !== null ? Autolinker.link(String(feature.properties['TYPE_STRUC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MODELE</strong><br />' + (feature.properties['MODELE'] !== null ? Autolinker.link(String(feature.properties['MODELE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['_'] !== null ? Autolinker.link(String(feature.properties['_'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Supportsariens_7_0() {
+            return {
+                pane: 'pane_Supportsariens_7',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+            }
+        }
+        function style_Supportsariens_7_1() {
+            return {
+                pane: 'pane_Supportsariens_7',
+                radius: 1.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+            }
+        }
+        map.createPane('pane_Supportsariens_7');
+        map.getPane('pane_Supportsariens_7').style.zIndex = 407;
+        map.getPane('pane_Supportsariens_7').style['mix-blend-mode'] = 'normal';
+        var layer_Supportsariens_7 = new L.geoJson.multiStyle(json_Supportsariens_7, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_Supportsariens_7',
+            onEachFeature: pop_Supportsariens_7,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Supportsariens_7_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Supportsariens_7_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_Supportsariens_7);
+        map.addLayer(layer_Supportsariens_7);
+        var title = new L.Control();
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>ITINERAIRE OPTIQUE</h2>';
+        };
+        title.addTo(map);
+        var osmGeocoder = new L.Control.OSMGeocoder({
+            collapsed: false,
+            position: 'topright',
+            text: 'Search',
+        });
+        osmGeocoder.addTo(map);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/Supportsariens_7.png" /> Supports aériens': layer_Supportsariens_7,'<img src="legend/Supportssouterrains_6.png" /> Supports souterrains': layer_Supportssouterrains_6,'<img src="legend/Parcourscablesoptiques_5.png" /> Parcours cables optiques': layer_Parcourscablesoptiques_5,'<img src="legend/Emplacementsboitiers_4.png" /> Emplacements boitiers': layer_Emplacementsboitiers_4,'<img src="legend/VOIRIE_3.png" /> VOIRIE': layer_VOIRIE_3,'<img src="legend/COURSDEAU_2.png" /> COURS D\'EAU': layer_COURSDEAU_2,'<img src="legend/BATIS_1.png" /> BATIS': layer_BATIS_1,'<img src="legend/PARCELLES_0.png" /> PARCELLES': layer_PARCELLES_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_Parcourscablesoptiques_5.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NOM'] !== null?String('<div style="color: #33a02c; font-size: 8pt; font-weight: bold; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['NOM']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Parcourscablesoptiques_5'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Supportssouterrains_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((label_Supportssouterrains_6_eval_expression(context) !== null?String('<div style="color: #ff7f00; font-size: 8pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + label_Supportssouterrains_6_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Supportssouterrains_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Supportsariens_7.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((label_Supportsariens_7_eval_expression(context) !== null?String('<div style="color: #1f78b4; font-size: 8pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + label_Supportsariens_7_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Supportsariens_7'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Parcourscablesoptiques_5,layer_Supportssouterrains_6,layer_Supportsariens_7]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Parcourscablesoptiques_5,layer_Supportssouterrains_6,layer_Supportsariens_7]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Parcourscablesoptiques_5,layer_Supportssouterrains_6,layer_Supportsariens_7]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Parcourscablesoptiques_5,layer_Supportssouterrains_6,layer_Supportsariens_7]);
+        });
+        </script>
+    </body>
+</html>
